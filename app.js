@@ -398,6 +398,36 @@ function bindEvents() {
     });
   }
 
+  // 綁定手動新增貨物
+  $('#btnAddItem').onclick = async () => {
+    const code = $('#newItemCode').value.trim();
+    const name = $('#newItemName').value.trim();
+    
+    if (!name) { toast('請輸入貨品名稱'); return; }
+    if (!code && !name) { toast('請輸入資料'); return; }
+
+    // 檢查係咪已經有同名或同 CODE 嘅貨
+    const exists = catalogData.find(item => 
+      (code && item.code === code) || item.name === name
+    );
+    if (exists) {
+      if (!confirm('已經有相同 CODE 或名稱嘅貨品，確定要繼續新增嗎？')) return;
+    }
+
+    // 存入資料庫
+    await DB.put('catalog', { code: code, name: name });
+    
+    // 清空輸入框
+    $('#newItemCode').value = '';
+    $('#newItemName').value = '';
+    
+    toast('已新增貨品');
+    
+    // 重新載入清單同 AI 引擎
+    await loadCatalog();
+  };
+
+
   $('#btnImport').onclick = () => $('#fileInput').click();
   $('#fileInput').onchange = async e => {
     const f = e.target.files[0];
