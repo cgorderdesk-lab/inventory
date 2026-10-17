@@ -3,6 +3,8 @@ const $$ = s => document.querySelectorAll(s);
 
 let fuse = null; // AI 匹配引擎
 let catalogData = []; // 存貨品清單
+let currentPage = 1; // 當前頁數
+const pageSize = 50; // 每頁顯示數量
 
 /* ================= 工具 ================= */
 function toast(msg, ms = 2500) {
@@ -156,27 +158,75 @@ async function loadCatalog() {
   catalogData = await DB.all('catalog');
   $('#catalogStat').textContent = `共 ${catalogData.length} 項貨品`;
   
-  // 初始化 AI (Fuse.js)
   if (catalogData.length > 0) {
     fuse = new Fuse(catalogData, {
-      keys: ['name'], // 根據名去搵
-      threshold: 0.4, // 0係完美匹配，1係完全亂嚟，0.4 算寬鬆
+      keys: ['name', 'code'],
+      threshold: 0.4, 
       includeScore: true
     });
   } else {
     fuse = null;
   }
-
-  $('#catalogList').innerHTML = catalogData.slice(0, 100).map(item => `
-    <div class="row" style="padding:8px 12px; font-size:14px;">
-      <div class="left">
-        <div class="n">${esc(item.name)}</div>
-        <div class="m">CODE: ${esc(item.code || '無')}</div>
-      </div>
-    </div>
-  `).join('');
+  
+  currentPage = 1; 
+  renderCatalogList(); 
 }
 
+// 🔽 呢個係新加嘅函數，專門負責處理搜尋同分頁 🔽
+function renderCatalogList() {
+  const keyword = $('#catalogSearch') ? $('#catalogSearch').value.toLowerCase().trim() : '';
+  let filtered = catalogData;
+
+  if (keyword) {
+    filtered = catalogData.filter(item => 
+      item.name.toLowerCase().includes(keyword) || 
+      (item.code && item.code.toLowerCase().includes(keyword))
+    );
+  }
+
+  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const startIdx = (currentPage - 1) * pageSize;
+  const pageData = filtered.slice(startIdx, startIdx + pageSize);
+
+  $('#catalogList').innerHTML = pageData.map(item => `
+    <div class="row" style="padding:8px 12px; font-size:14px; display:flex; justify-content:space-between; border-bottom:1px solid #eee;">
+      <div class="left">
+        <div class="n">${esc(item.name)}</div>
+        <div class="m">CODE: <span style="color:#0d6efd;font-weight:bold">${esc(item.code || '無')}</span></div>
+      </div>
+    </div>
+  `).join('') || '<div class="stat">搵唔到符合嘅貨品</div>';
+
+  const paginationEl = $('#catalogPagination');
+  if (!paginationEl) return;
+  
+  if (totalPages > 1) {
+    paginationEl.innerHTML = `
+      <button id="btnPrevPage" ${currentPage === 1 ? 'disabled' : ''}>上一頁</button>
+      <span class="page-info">第 ${currentPage} / ${totalPages} 頁</span>
+      <button id="btnNextPage" ${currentPage === totalPages ? 'disabled' : ''}>下一頁</button>
+    `;
+
+    $('#btnPrevPage').onclick = () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderCatalogList();
+        $('#catalogList').scrollTop = 0;
+      }
+    };
+    $('#btnNextPage').onclick = () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderCatalogList();
+        $('#catalogList').scrollTop = 0;
+      }
+    };
+  } else {
+    paginationEl.innerHTML = '';
+  }
+}
 async function loadPending() {
   const records = await DB.all('records');
   records.sort((a,b) => b.timestamp - a.timestamp);
@@ -340,7 +390,14 @@ function bindEvents() {
   $('#btnBigVoice').onclick = startVoice;
   $('#btnVoiceStop').onclick = stopVoice;
 
-  // 清單
+  // 綁定貨品清單搜尋框
+  if ($('#catalogSearch')) {
+    $('#catalogSearch').addEventListener('input', () => {
+      currentPage = 1; // 打字搜尋時跳返第一頁
+      renderCatalogList();
+    });
+  }
+
   $('#btnImport').onclick = () => $('#fileInput').click();
   $('#fileInput').onchange = async e => {
     const f = e.target.files[0];
