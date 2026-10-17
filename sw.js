@@ -1,4 +1,4 @@
-const CACHE = 'inventory-v7'; // 改咗 v3
+const CACHE = 'inventory-v8'; // 改咗 v3
 const ASSETS = [
   './',
   './index.html',
