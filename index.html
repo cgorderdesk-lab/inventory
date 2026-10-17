@@ -43,15 +43,25 @@
   </section>
 
   <!-- ===== 2. 貨品清單 ===== -->
-  <section id="view-catalog" class="view">
-    <div class="toolbar">
+  <div class="toolbar">
       <button id="btnImport" class="btn-primary">匯入貨品清單 (CODE / 名稱)</button>
       <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
       <button id="btnClearCatalog" class="btn-danger">清空清單</button>
     </div>
+    
+    <!-- 新增貨物表單 -->
+    <div class="panel" style="display:flex; gap:8px; margin-bottom:10px; padding:10px; background:#fff; border-radius:8px;">
+      <input type="text" id="newItemCode" placeholder="CODE (選填)" style="flex:1; padding:10px; border:1px solid #dfe3e8; border-radius:6px;">
+      <input type="text" id="newItemName" placeholder="貨品名稱 (必填)" style="flex:2; padding:10px; border:1px solid #dfe3e8; border-radius:6px;">
+      <button id="btnAddItem" class="btn-primary" style="padding:0 15px; border-radius:6px; white-space:nowrap;">新增</button>
+    </div>
+
     <div class="stat" id="catalogStat">未匯入清單</div>
-    <div id="catalogList" class="list" style="max-height: 50vh; overflow-y: auto; margin-bottom: 10px;"></div>
-    <div id="catalogPagination" class="pagination"></div>
+    
+    <!-- 搜尋框 -->
+    <div class="searchbar" style="margin-top: 10px; margin-bottom: 10px;">
+      <input id="catalogSearch" type="text" placeholder="🔍 搜尋 CODE 或 貨名..." autocomplete="off" style="background:#fff; border:2px solid #0d6efd;">
+    </div>
   </section>
 
   <!-- ===== 3. 確認與導出 ===== -->
