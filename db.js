@@ -1,5 +1,4 @@
-/* 極簡 IndexedDB 封裝 */
-const DB_NAME = 'inventory_db';
+const DB_NAME = 'inventory_db_v2';
 const DB_VERSION = 1;
 let _dbPromise = null;
 
@@ -9,17 +8,11 @@ function openDB() {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = e => {
       const db = e.target.result;
-      if (!db.objectStoreNames.contains('products')) {
-        const s = db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
-        s.createIndex('barcode', 'barcode', { unique: false });
-        s.createIndex('sku', 'sku', { unique: false });
+      if (!db.objectStoreNames.contains('catalog')) {
+        db.createObjectStore('catalog', { keyPath: 'id', autoIncrement: true });
       }
-      if (!db.objectStoreNames.contains('counts')) {
-        const s = db.createObjectStore('counts', { keyPath: 'id', autoIncrement: true });
-        s.createIndex('sessionId', 'sessionId', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('meta')) {
-        db.createObjectStore('meta', { keyPath: 'key' });
+      if (!db.objectStoreNames.contains('records')) {
+        db.createObjectStore('records', { keyPath: 'id', autoIncrement: true });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -40,14 +33,7 @@ function _wrap(storeName, mode, fn) {
 
 const DB = {
   put:   (s, v) => _wrap(s, 'readwrite', st => st.put(v)),
-  get:   (s, k) => _wrap(s, 'readonly',  st => st.get(k)),
   all:   (s)    => _wrap(s, 'readonly',  st => st.getAll()),
-  byIndex: (s, idx, v) => openDB().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(s, 'readonly');
-    const req = tx.objectStore(s).index(idx).getAll(v);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  })),
   del:   (s, k) => _wrap(s, 'readwrite', st => st.delete(k)),
   clear: (s)    => _wrap(s, 'readwrite', st => st.clear())
 };
