@@ -1,0 +1,10 @@
+{
+  "name": "盤點系統",
+  "short_name": "盤點",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": []
+}

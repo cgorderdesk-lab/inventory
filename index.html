@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d6efd">
+<title>盤點系統</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <div class="title">盤點</div>
+    <div class="sub" id="topSub">—</div>
+  </div>
+  <div class="net" id="netState">●</div>
+</header>
+
+<main>
+  <!-- ===== 盤點 ===== -->
+  <section id="view-count" class="view active">
+    <div class="searchbar">
+      <input id="searchInput" type="text" placeholder="輸入條碼 / 編號 / 名稱" autocomplete="off" enterkeyhint="search">
+      <button id="btnVoice" class="btn-icon" title="語音輸入">🎤</button>
+    </div>
+
+    <div id="voicePanel" class="voice-panel" style="display:none">
+      <div class="voice-text" id="voiceText">請講…</div>
+      <div class="voice-hint">例如：「可樂 330 一百二十」</div>
+      <button id="btnVoiceStop" class="btn-stop">停止</button>
+    </div>
+
+    <div id="searchResults" class="results"></div>
+
+    <div class="panel" id="entryPanel" style="display:none">
+      <div class="entry-head">
+        <div class="pname" id="entryName">—</div>
+        <div class="pmeta" id="entryMeta"></div>
+      </div>
+      <div class="entry-qty">
+        <button class="qbtn" data-delta="-1">−</button>
+        <input id="qtyInput" type="number" inputmode="decimal" step="0.1" value="1">
+        <button class="qbtn" data-delta="1">+</button>
+      </div>
+      <div class="entry-actions">
+        <input id="locInput" type="text" placeholder="位置（選填）">
+        <input id="noteInput" type="text" placeholder="備註（選填）">
+      </div>
+      <div class="entry-btns">
+        <button id="btnCancelEntry" class="btn-secondary">取消</button>
+        <button id="btnSaveEntry" class="btn-primary">確認</button>
+      </div>
+    </div>
+
+    <div class="list-title">
+      <span>本次已盤</span>
+      <span id="countBadge" class="badge">0</span>
+    </div>
+    <div id="todayList" class="list"></div>
+  </section>
+
+  <!-- ===== 貨品 ===== -->
+  <section id="view-products" class="view">
+    <div class="toolbar">
+      <button id="btnImport" class="btn-primary">匯入貨品 Excel</button>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
+      <button id="btnClearProducts" class="btn-danger">清空貨品</button>
+    </div>
+    <div class="searchbar">
+      <input id="productSearch" type="text" placeholder="搜尋貨品">
+    </div>
+    <div id="productList" class="list"></div>
+    <div class="stat" id="productStat"></div>
+  </section>
+
+  <!-- ===== 報表 ===== -->
+  <section id="view-report" class="view">
+    <div class="toolbar">
+      <button id="btnExport" class="btn-primary">匯出 Excel</button>
+      <button id="btnNewSession" class="btn-secondary">開新盤點單</button>
+    </div>
+    <div class="stat" id="reportStat"></div>
+    <div id="reportList" class="list"></div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button data-view="view-count" class="active">盤點</button>
+  <button data-view="view-products">貨品</button>
+  <button data-view="view-report">報表</button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script src="lib/xlsx.full.min.js"></script>
+<script src="db.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
