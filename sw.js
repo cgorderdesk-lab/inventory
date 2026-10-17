@@ -1,4 +1,4 @@
-const CACHE = 'inventory-v2';
+const CACHE = 'inventory-v3'; // 改咗 v3
 const ASSETS = [
   './',
   './index.html',
@@ -6,7 +6,8 @@ const ASSETS = [
   './app.js',
   './db.js',
   './manifest.json',
-  './lib/xlsx.full.min.js'
+  './lib/xlsx.full.min.js',
+  'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js' // 加入 Fuse.js
 ];
 
 self.addEventListener('install', e => {
@@ -27,7 +28,7 @@ self.addEventListener('fetch', e => {
     caches.match(e.request).then(hit => {
       if (hit) return hit;
       return fetch(e.request).then(resp => {
-        if (resp && resp.ok && resp.type === 'basic') {
+        if (resp && resp.ok) {
           const clone = resp.clone();
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
