@@ -120,3 +120,59 @@ main{padding:12px}
   background:#dc3545;color:#fff;font-size:16px;cursor:pointer;
 }
 .btn-icon.recording{background:#dc3545}
+
+/* ===== 新增樣式 ===== */
+.btn-record {
+  width: 100%;
+  padding: 30px 20px;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.btn-record:active { transform: scale(0.98); background: #0b5ed7; }
+.btn-record .icon { font-size: 40px; }
+
+.pending-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-left: 5px solid #ffc107;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.pending-card.matched { border-left-color: #198754; }
+.pending-card.unmatched { border-left-color: #dc3545; }
+
+.pending-card .row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.pending-card .label { font-size: 12px; color: #666; }
+.pending-card .val { font-weight: bold; font-size: 16px; }
+.pending-card .code-box {
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 14px;
+  margin-top: 5px;
+  border: 1px solid #dee2e6;
+}
+.pending-card select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+.pending-actions { display: flex; gap: 10px; margin-top: 10px; }
+.pending-actions button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+.btn-confirm { background: #198754; color: #fff; }
+.btn-delete { background: #f8f9fa; color: #dc3545; border: 1px solid #dc3545 !important; }
